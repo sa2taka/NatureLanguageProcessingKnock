@@ -14,7 +14,8 @@ defmodule Json do
 
     # IO.puts england #20
     # get_category(england) # 21
-    get_category_names(england) #22
+    # get_category_names(england) #22
+    print_section_with_level(england) #23
   end
 
   def get_category(text) do
@@ -28,4 +29,12 @@ defmodule Json do
     |> IO.inspect
   end
 
+  def print_section_with_level(text) do
+    Regex.scan(~r/(==+)\s*(.+?)\s*==+/, text)
+    |> Enum.map(fn m ->
+      eq = Enum.at(m, 1)
+      [(Regex.scan(~r/=/, eq) |> Enum.count) - 1, Enum.at(m, 2)]
+    end)
+    |> IO.inspect
+  end
 end
