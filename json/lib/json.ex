@@ -15,7 +15,8 @@ defmodule Json do
     # IO.puts england #20
     # get_category(england) # 21
     # get_category_names(england) #22
-    print_section_with_level(england) #23
+    # print_section_with_level(england) #23
+    IO.inspect get_media(england) #24
   end
 
   def get_category(text) do
@@ -36,5 +37,10 @@ defmodule Json do
       [(Regex.scan(~r/=/, eq) |> Enum.count) - 1, Enum.at(m, 2)]
     end)
     |> IO.inspect
+  end
+
+  def get_media(text) do
+    Regex.scan(~r/ファイル:(.*?)[|\]]/, text)
+    |> Enum.map(&(Enum.at(&1, 1)))
   end
 end
