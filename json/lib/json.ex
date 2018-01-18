@@ -12,7 +12,13 @@ defmodule Json do
 
     england = england["text"]
 
-    IO.puts england #20
+    # IO.puts england #20
+    get_category(england) # 21
+  end
+
+  def get_category(text) do
+    Regex.scan(~r/\[\[Category:.+?\]\]/, text)
+    |> IO.inspect
   end
 
 end
