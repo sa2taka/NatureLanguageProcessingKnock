@@ -13,11 +13,18 @@ defmodule Json do
     england = england["text"]
 
     # IO.puts england #20
-    get_category(england) # 21
+    # get_category(england) # 21
+    get_category_names(england) #22
   end
 
   def get_category(text) do
     Regex.scan(~r/\[\[Category:.+?\]\]/, text)
+    |> IO.inspect
+  end
+
+  def get_category_names(text) do
+    Regex.scan(~r/Category:([^\]]*)/, text)
+    |> Enum.map(&(&1 |> Enum.at(1)))
     |> IO.inspect
   end
 
