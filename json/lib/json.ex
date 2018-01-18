@@ -16,7 +16,8 @@ defmodule Json do
     # get_category(england) # 21
     # get_category_names(england) #22
     # print_section_with_level(england) #23
-    IO.inspect get_media(england) #24
+    # IO.inspect get_media(england) #24
+    IO.inspect get_foundation_info(england) #25
   end
 
   def get_category(text) do
@@ -42,5 +43,11 @@ defmodule Json do
   def get_media(text) do
     Regex.scan(~r/ファイル:(.*?)[|\]]/, text)
     |> Enum.map(&(Enum.at(&1, 1)))
+  end
+
+  def get_foundation_info(text) do
+    foundation = Regex.run(~r/\{\{基礎情報(.*?)\}\}$/sm, text)
+    Regex.scan(~r/\|(.*) = (.*)/, Enum.at(foundation, 1))
+    |> Enum.reduce(%{}, fn [_, key, value], acc -> Map.put(acc, key, value) end)
   end
 end
