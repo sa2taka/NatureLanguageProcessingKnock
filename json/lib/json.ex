@@ -19,7 +19,8 @@ defmodule Json do
     # IO.inspect get_media(england) #24
     # IO.inspect get_foundation_info(england) #25
     # IO.inspect remove_emphasis(england) #26
-    IO.inspect remove_emphasis(england) |> remove_inside_link #27
+    # IO.inspect remove_emphasis(england) |> remove_inside_link #27
+    File.write "remove_mark_england.txt", remove_mark(england) #28 #わりと不完全。再帰使ってないから。
   end
 
   def get_category(text) do
@@ -59,5 +60,22 @@ defmodule Json do
 
   def remove_inside_link(text) do
     Regex.replace(~r/\[\[(?:.+?\|)*(.+?)\]\]/, text, "\\1")
+  end
+
+  def remove_mark(text) do
+    text
+    |> remove_emphasis
+    |> remove_inside_link
+    |> remove_by_regex(~r/#REDIRECT/)
+    |> remove_by_regex(~r/\~\~\~\~/)
+    |> remove_by_regex(~r/<!--.*?-->/)
+    |> remove_by_regex(~r/(==+)(.+?)==+/, "\\2")
+    |> remove_by_regex(~r/[\*#]*/)
+    |> remove_by_regex(~r/[;:]/)
+    |> remove_by_regex(~r/<.*?>/)
+  end
+
+  def remove_by_regex(text, regex, replacement \\ "") do
+    Regex.replace(regex, text, replacement)
   end
 end
