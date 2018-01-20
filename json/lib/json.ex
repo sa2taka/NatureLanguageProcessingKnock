@@ -18,7 +18,8 @@ defmodule Json do
     # print_section_with_level(england) #23
     # IO.inspect get_media(england) #24
     # IO.inspect get_foundation_info(england) #25
-    IO.inspect remove_emphasis(england) #26
+    # IO.inspect remove_emphasis(england) #26
+    IO.inspect remove_emphasis(england) |> remove_inside_link #27
   end
 
   def get_category(text) do
@@ -56,4 +57,7 @@ defmodule Json do
     Regex.replace(~r/''+/, text, "")
   end
 
+  def remove_inside_link(text) do
+    Regex.replace(~r/\[\[(?:.+?\|)*(.+?)\]\]/, text, "\\1")
+  end
 end
