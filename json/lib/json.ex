@@ -17,7 +17,8 @@ defmodule Json do
     # get_category_names(england) #22
     # print_section_with_level(england) #23
     # IO.inspect get_media(england) #24
-    IO.inspect get_foundation_info(england) #25
+    # IO.inspect get_foundation_info(england) #25
+    IO.inspect remove_emphasis(england) #26
   end
 
   def get_category(text) do
@@ -50,4 +51,9 @@ defmodule Json do
     Regex.scan(~r/\|(.*) = (.*)/, Enum.at(foundation, 1))
     |> Enum.reduce(%{}, fn [_, key, value], acc -> Map.put(acc, key, value) end)
   end
+
+  def remove_emphasis(text) do
+    Regex.replace(~r/''+/, text, "")
+  end
+
 end
