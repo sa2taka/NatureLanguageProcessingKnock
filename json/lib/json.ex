@@ -20,7 +20,8 @@ defmodule Json do
     # IO.inspect get_foundation_info(england) #25
     # IO.inspect remove_emphasis(england) #26
     # IO.inspect remove_emphasis(england) |> remove_inside_link #27
-    File.write "remove_mark_england.txt", remove_mark(england) #28 #わりと不完全。再帰使ってないから。
+    # File.write "remove_mark_england.txt", remove_mark(england) #28 #わりと不完全。再帰使ってないから。
+    IO.puts get_flag(england) #29 
   end
 
   def get_category(text) do
@@ -77,5 +78,20 @@ defmodule Json do
 
   def remove_by_regex(text, regex, replacement \\ "") do
     Regex.replace(regex, text, replacement)
+  end
+
+  def get_flag(text) do
+    image_path = Regex.scan(~r/国旗画像 = (.*)/, text) |> Enum.at(0) |> Enum.at(1)
+    path = "https://commons.wikimedia.org/w/api.php?action=query&titles=File:#{image_path}&prop=imageinfo&iiprop=url&format=json"
+    |> String.replace(~r/ /, "%20")
+    HTTPoison.start
+    case HTTPoison.get! path do
+      %HTTPoison.Response { status_code: 200, body: body } ->
+        body
+    end
+    |> Poison.decode!()
+    |> get_in(["query", "pages", "347935", "imageinfo"])
+    |> Enum.at(0)
+    |> Map.get("url")
   end
 end

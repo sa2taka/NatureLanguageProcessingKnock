@@ -21,6 +21,7 @@ defmodule Json.Mixfile do
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-    [{:poison, "~> 3.1"},]
+    [{:poison, "~> 3.1"},
+    {:httpoison, "~> 1.0"},]
   end
 end
