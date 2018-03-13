@@ -1,8 +1,9 @@
 defmodule MecabExtractor do
   def main(_) do
-    neko = File.read! "neko.txt"
+    # neko = File.read! "neko.txt"
     # mecab_to_file(neko, "neko.txt.mecab")
     # 同じ単語を複数使用しない時にはuniqを使うと良いかも知れない
+    mecabs = read_neko_mecabs("neko.txt.mecab") #1
   end
 
   def mecab_to_file(str, filename) do
@@ -17,7 +18,18 @@ defmodule MecabExtractor do
     end)
   end
 
-  def extract_verb(str) do
+  def read_neko_mecabs(filename) do
+    File.stream!(filename)
+    |> Enum.to_list
+    |> Enum.map(fn(mecab_str) ->
+      elms = String.split(mecab_str, "\t")
+      [surface, base, pos, pos1] = elms
+      pos1 = String.trim(pos1)
+      %{ :surface => surface, :base => base, :pos => pos, :pos1 => pos1 }
+    end)
+  end
+
+  def extract_verb(words) do
 
   end
 end
