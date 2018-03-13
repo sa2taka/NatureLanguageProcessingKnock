@@ -3,7 +3,8 @@ defmodule MecabExtractor do
     # neko = File.read! "neko.txt"
     # mecab_to_file(neko, "neko.txt.mecab")
     # 同じ単語を複数使用しない時にはuniqを使うと良いかも知れない
-    mecabs = read_neko_mecabs("neko.txt.mecab") #1
+    mecabs = read_neko_mecabs("neko.txt.mecab") #30
+    IO.inspect extract_verb(mecabs)
   end
 
   def mecab_to_file(str, filename) do
@@ -30,6 +31,13 @@ defmodule MecabExtractor do
   end
 
   def extract_verb(words) do
-
+    Enum.uniq(words)
+    |> Enum.reduce([], fn(word, acc) ->
+      if word[:pos] == "動詞" do
+        [word[:surface] | acc]
+      else
+        acc
+      end
+    end)
   end
 end
