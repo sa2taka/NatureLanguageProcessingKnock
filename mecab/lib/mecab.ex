@@ -6,7 +6,8 @@ defmodule MecabExtractor do
     mecabs = read_neko_mecabs("neko.txt.mecab") #30
     # IO.inspect extract_verb(mecabs) #31
     # IO.inspect extract_base(mecabs) #32
-    IO.inspect extract_sahen(mecabs) #33
+    # IO.inspect extract_sahen(mecabs) #33
+    IO.inspect extract_linked_with_no(mecabs) #34
   end
 
   def mecab_to_file(str, filename) do
@@ -63,5 +64,22 @@ defmodule MecabExtractor do
         acc
       end
     end)
+  end
+
+  def extract_linked_with_no(words, acc \\ [], window \\ []) when length(words) != 1 do
+    window = window ++ [hd(words)]
+    words = tl(words)
+    if length(window) == 3 do
+      [first, second, third] = window
+      if Enum.map(window, &(&1[:pos])) == ["名詞", "助詞", "名詞"] && second[:surface] == "の" do
+        acc = [first[:surface] <> second[:surface] <> third[:surface] | acc]
+      end
+      window = tl(window)
+    end
+    extract_linked_with_no(words, acc, window)
+  end
+
+  def extract_linked_with_no(words, acc, window) do
+    acc
   end
 end
