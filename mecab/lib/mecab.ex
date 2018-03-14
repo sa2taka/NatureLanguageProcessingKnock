@@ -8,7 +8,8 @@ defmodule MecabExtractor do
     # IO.inspect extract_base(mecabs) #32
     # IO.inspect extract_sahen(mecabs) #33
     # IO.inspect extract_linked_with_no(mecabs) #34
-    IO.inspect extract_sequence_noun(mecabs)
+    # IO.inspect extract_sequence_noun(mecabs) #35
+    IO.inspect get_frequency(mecabs) |> Enum.map(&(hd(Map.keys &1))) #36
   end
 
   def mecab_to_file(str, filename) do
@@ -102,5 +103,13 @@ defmodule MecabExtractor do
 
   def extract_sequence_noun(words, acc, work, matched_num) do
     acc
+  end
+
+  def get_frequency(words) do
+    Enum.reduce(words, %{}, fn(word, acc) ->
+      Map.update(acc, word, 1, &(&1 + 1))
+    end)
+    |> Enum.sort_by(fn {_, c} -> c end, & >= /2)
+    |> Enum.map(fn {w, c} -> %{w[:surface] => c} end)
   end
 end
