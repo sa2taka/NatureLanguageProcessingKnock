@@ -9,7 +9,11 @@ defmodule MecabExtractor do
     # IO.inspect extract_sahen(mecabs) #33
     # IO.inspect extract_linked_with_no(mecabs) #34
     # IO.inspect extract_sequence_noun(mecabs) #35
-    IO.inspect get_frequency(mecabs) |> Enum.map(&(hd(Map.keys &1))) #36
+    # IO.inspect get_frequency(mecabs) |> Enum.map(&(hd(Map.keys &1))) #36
+
+    IO.inspect get_frequency(mecabs)
+    |> Enum.slice(0..9) #上位10個
+    |> save_data("37.dat") #37
   end
 
   def mecab_to_file(str, filename) do
@@ -111,5 +115,12 @@ defmodule MecabExtractor do
     end)
     |> Enum.sort_by(fn {_, c} -> c end, & >= /2)
     |> Enum.map(fn {w, c} -> %{w[:surface] => c} end)
+  end
+
+  def save_data(data, filename) do
+    Enum.map(data, fn(info) ->
+      saved_line = Enum.map(info, fn {w, c} -> w <> "\t" <> Integer.to_string(c) <> "\n" end) |> hd
+      File.write!(filename, saved_line, [:append])
+    end)
   end
 end
