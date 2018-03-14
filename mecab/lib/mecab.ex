@@ -15,9 +15,12 @@ defmodule MecabExtractor do
     # |> Enum.slice(0..9) #上位10個
     # |> save_data_for_frequency("37.dat") #37
 
+    # get_frequency(mecabs)
+    # |> get_histgram
+    # |> save_data_for_histgram("38.dat") #38
+
     get_frequency(mecabs)
-    |> get_histgram
-    |> save_data_for_histgram("38.dat")
+    |> save_data_for_zipf("39.dat") #39
   end
 
   def mecab_to_file(str, filename) do
@@ -140,6 +143,17 @@ defmodule MecabExtractor do
     |> Enum.map(fn{c, n} ->
       saved_line = Integer.to_string(c) <> "\t" <> Integer.to_string(n) <> "\n"
       File.write!(filename, saved_line, [:append])
+    end)
+  end
+
+  def save_data_for_zipf(data, filename) do
+    Enum.sort_by(data, fn (info) ->
+      c = hd(Map.values(info))
+    end, & >= /2)
+    Enum.with_index(data)
+    |> Enum.map(fn {info, i} ->
+      c = hd(Map.values(info))
+      File.write!(filename, Integer.to_string(c) <> "\t" <> Integer.to_string(i + 1) <> "\n", [:append])
     end)
   end
 end
