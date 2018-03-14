@@ -11,9 +11,13 @@ defmodule MecabExtractor do
     # IO.inspect extract_sequence_noun(mecabs) #35
     # IO.inspect get_frequency(mecabs) |> Enum.map(&(hd(Map.keys &1))) #36
 
-    IO.inspect get_frequency(mecabs)
-    |> Enum.slice(0..9) #上位10個
-    |> save_data("37.dat") #37
+    # get_frequency(mecabs)
+    # |> Enum.slice(0..9) #上位10個
+    # |> save_data_for_frequency("37.dat") #37
+
+    get_frequency(mecabs)
+    |> get_histgram
+    |> save_data_for_histgram("38.dat")
   end
 
   def mecab_to_file(str, filename) do
@@ -117,9 +121,24 @@ defmodule MecabExtractor do
     |> Enum.map(fn {w, c} -> %{w[:surface] => c} end)
   end
 
-  def save_data(data, filename) do
+  def get_histgram(words) do
+    Enum.reduce(words, %{}, fn(info, acc) ->
+      c = hd(Map.values(info))
+      Map.update(acc, c, 1, &(&1 + 1))
+    end)
+  end
+
+  def save_data_for_frequency(data, filename) do
     Enum.map(data, fn(info) ->
       saved_line = Enum.map(info, fn {w, c} -> w <> "\t" <> Integer.to_string(c) <> "\n" end) |> hd
+      File.write!(filename, saved_line, [:append])
+    end)
+  end
+
+  def save_data_for_histgram(data, filename) do
+    Enum.sort_by(data, fn {_, n} -> n end, & >= /2)
+    |> Enum.map(fn{c, n} ->
+      saved_line = Integer.to_string(c) <> "\t" <> Integer.to_string(n) <> "\n"
       File.write!(filename, saved_line, [:append])
     end)
   end
