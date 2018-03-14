@@ -7,7 +7,8 @@ defmodule MecabExtractor do
     # IO.inspect extract_verb(mecabs) #31
     # IO.inspect extract_base(mecabs) #32
     # IO.inspect extract_sahen(mecabs) #33
-    IO.inspect extract_linked_with_no(mecabs) #34
+    # IO.inspect extract_linked_with_no(mecabs) #34
+    IO.inspect extract_sequence_noun(mecabs)
   end
 
   def mecab_to_file(str, filename) do
@@ -66,7 +67,7 @@ defmodule MecabExtractor do
     end)
   end
 
-  def extract_linked_with_no(words, acc \\ [], window \\ []) when length(words) != 1 do
+  def extract_linked_with_no(words, acc \\ [], window \\ []) when length(words) != 0 do
     window = window ++ [hd(words)]
     words = tl(words)
     if length(window) == 3 do
@@ -80,6 +81,26 @@ defmodule MecabExtractor do
   end
 
   def extract_linked_with_no(words, acc, window) do
+    acc
+  end
+
+  def extract_sequence_noun(words, acc \\ [], work \\ "", matched_num \\ 0) when length(words) != 0 do
+    now_word = hd(words)
+    words = tl(words)
+    if now_word[:pos] == "名詞"do
+      work = work <> now_word[:surface]
+      matched_num = matched_num + 1
+    else
+      if matched_num >= 2 do
+        acc = [work | acc]
+      end
+      matched_num = 0
+      work = ""
+    end
+    extract_sequence_noun(words, acc, work, matched_num)
+  end
+
+  def extract_sequence_noun(words, acc, work, matched_num) do
     acc
   end
 end
